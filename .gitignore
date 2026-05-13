@@ -1,0 +1,170 @@
+# ============================================================================
+# Python / Backend
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+.eggs/
+*.egg-info/
+dist/
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+
+# Virtual environments
+.venv
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.env
+.env.local
+.env.*.local
+
+# ============================================================================
+# Node / Frontend
+# ============================================================================
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Production
+/dist
+/dist-ssr
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.err.log
+
+# ============================================================================
+# IDE / Editor
+# ============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+*.iml
+.project
+.classpath
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# ============================================================================
+# Database / Data
+# ============================================================================
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlitedb
+
+# ============================================================================
+# Environment / Secrets
+# ============================================================================
+.env
+.env.local
+.env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# ============================================================================
+# OS Specific
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============================================================================
+# Testing
+# ============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+*.cover
+.tox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# ============================================================================
+# Project Specific
+# ============================================================================
+# Backend logs
+backend-server.log
+backend-server.err.log
+frontend-server.log
+frontend-server.err.log
+
+# Certificates
+*.pem
+*.crt
+*.key
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# ============================================================================
+# Build / Dist
+# ============================================================================
+/build
+/dist
+.next
+.nuxt
+dist
+
+# ============================================================================
+# Miscellaneous
+# ============================================================================
+.env.example  # Remove if you want to commit this template

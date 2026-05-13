@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Additional patterns for backend logs
+backend-server.log
+backend-server.err.log
+*.err.log
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# pycache and compiled files
+*.pyc
+
+# Certificates and keys
+*.pem
+*.crt
+*.key
