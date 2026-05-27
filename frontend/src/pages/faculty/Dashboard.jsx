@@ -11,6 +11,7 @@ function FacultyDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [error, setError] = useState(null);
+  const [selectedTimetableDay, setSelectedTimetableDay] = useState('Monday');
 
   // Attendance Form State
   const [attendanceForm, setAttendanceForm] = useState({
@@ -449,51 +450,55 @@ function FacultyDashboard() {
 
         {/* Timetable Tab Content */}
         {activeTab === 'timetable' && (
-          <div className="mt-8 max-w-xl mx-auto space-y-6">
-            <div>
-              <h3 className="text-lg font-bold text-white tracking-tight">Generate Class Timetable</h3>
-              <p className="text-xs text-gray-400 mt-1">Provide class subject lists and constraint preferences to auto-generate schedules.</p>
+          <div className="mt-8 space-y-10">
+            {/* Input Form Wrapper */}
+            <div className="max-w-xl mx-auto space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-white tracking-tight">Generate Class Timetable</h3>
+                <p className="text-xs text-gray-400 mt-1">Provide class subject lists and constraint preferences to auto-generate schedules.</p>
+              </div>
+              
+              <form onSubmit={handleGenerateTimetable} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
+                    Subjects (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={timetableForm.subjects}
+                    onChange={(e) => setTimetableForm({ ...timetableForm, subjects: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all duration-200"
+                    placeholder="e.g., Math, Physics, Chemistry"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
+                    Constraints (optional, comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={timetableForm.constraints}
+                    onChange={(e) => setTimetableForm({ ...timetableForm, constraints: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all duration-200"
+                    placeholder="e.g., No classes on Friday, Morning slots preferred"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={timetableLoading}
+                  className="btn-primary w-full py-3 rounded-xl mt-4"
+                >
+                  {timetableLoading ? 'Deploying engine...' : 'Generate Optimal Timetable'}
+                </button>
+              </form>
             </div>
-            
-            <form onSubmit={handleGenerateTimetable} className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
-                  Subjects (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={timetableForm.subjects}
-                  onChange={(e) => setTimetableForm({ ...timetableForm, subjects: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all duration-200"
-                  placeholder="e.g., Math, Physics, Chemistry"
-                  required
-                />
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
-                  Constraints (optional, comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={timetableForm.constraints}
-                  onChange={(e) => setTimetableForm({ ...timetableForm, constraints: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all duration-200"
-                  placeholder="e.g., No classes on Friday, Morning slots preferred"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={timetableLoading}
-                className="btn-primary w-full py-3 rounded-xl mt-4"
-              >
-                {timetableLoading ? 'Deploying engine...' : 'Generate Optimal Timetable'}
-              </button>
-            </form>
-
+            {/* Generated Timetable Section - Much wider for full week overview! */}
             {generatedTimetable && (
-              <div className="mt-8 space-y-6">
+              <div className="max-w-7xl mx-auto space-y-6 pt-8 border-t border-white/5 relative">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-white/5">
                   <div>
                     <h4 className="text-lg font-bold text-white tracking-tight">Generated Timetable Overview</h4>
@@ -525,65 +530,84 @@ function FacultyDashboard() {
                   </div>
                 )}
 
-                {/* Calendar Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
-                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => {
-                    const classes = generatedTimetable.timetable?.[day] || [];
-                    return (
-                      <div key={day} className="flex flex-col bg-white/[0.02] border border-white/5 rounded-2xl p-4 hover:border-indigo-500/20 duration-300 shadow-xl">
-                        {/* Day Header */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-3 border-b border-white/5 mb-4">
-                          <h5 className="font-bold text-white text-sm tracking-tight">{day}</h5>
-                          <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wider w-max ${classes.length > 0 ? 'bg-indigo-500/15 border border-indigo-500/20 text-indigo-300' : 'bg-white/5 text-gray-500 border border-white/5'}`}>
-                            {classes.length} {classes.length === 1 ? 'Class' : 'Classes'}
-                          </span>
-                        </div>
+                {/* Weekly Horizontal Kanban/Grid Board */}
+                <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                  <div className="flex gap-4 md:gap-5 min-w-[1100px] lg:min-w-full">
+                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => {
+                      const classes = generatedTimetable.timetable?.[day] || [];
+                      return (
+                        <div 
+                          key={day} 
+                          className="flex-1 min-w-[210px] flex flex-col bg-[#0b1227]/60 border border-white/5 rounded-2xl p-4 hover:border-indigo-500/20 duration-300 shadow-xl backdrop-blur-md relative"
+                        >
+                          {/* Day Header */}
+                          <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4">
+                            <h5 className="font-extrabold text-white text-xs sm:text-sm tracking-tight uppercase tracking-widest">{day}</h5>
+                            <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black tracking-wider uppercase ${
+                              classes.length > 0 
+                                ? 'bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 shadow-md shadow-indigo-500/5' 
+                                : 'bg-white/5 text-gray-500 border border-white/5'
+                            }`}>
+                              {classes.length} {classes.length === 1 ? 'Class' : 'Classes'}
+                            </span>
+                          </div>
 
-                        {/* Class Cards */}
-                        <div className="space-y-3 flex-1 flex flex-col justify-start">
-                          {classes.length > 0 ? (
-                            classes.map((cls, idx) => (
-                              <div key={idx} className="p-3 bg-gradient-to-br from-indigo-950/20 to-slate-900/60 border border-white/5 hover:border-indigo-500/30 rounded-xl relative overflow-hidden group duration-200">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-indigo-500 to-blue-500" />
-                                
-                                <p className="font-bold text-white text-xs pl-1 group-hover:text-indigo-300 duration-200 leading-tight">{cls.subject}</p>
-                                
-                                <div className="space-y-1.5 mt-3 pl-1">
-                                  <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
-                                    <svg className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    {cls.time}
-                                  </div>
-
-                                  <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-lg w-max">
-                                    <svg className="w-3 h-3 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    {cls.room}
-                                  </div>
-
-                                  {cls.faculty && (
-                                    <div className="flex items-center gap-1.5 text-[9px] text-gray-500 font-medium mt-1">
-                                      <svg className="w-3 h-3 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          {/* Cards List */}
+                          <div className="space-y-3 flex-1 flex flex-col justify-start">
+                            {classes.length > 0 ? (
+                              classes.map((cls, idx) => (
+                                <div 
+                                  key={idx} 
+                                  className="relative overflow-hidden bg-gradient-to-b from-[#111833]/90 to-[#0e142b]/95 border border-white/5 hover:border-indigo-500/30 rounded-xl p-3.5 hover:-translate-y-0.5 duration-200 shadow-lg group"
+                                >
+                                  {/* Left Accent Accent Accent */}
+                                  <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-indigo-500 to-blue-500 group-hover:from-indigo-400 group-hover:to-cyan-400 duration-200" />
+                                  
+                                  <div className="space-y-2">
+                                    {/* Subject */}
+                                    <p className="font-black text-white text-xs tracking-tight break-words leading-snug pl-1">
+                                      {cls.subject}
+                                    </p>
+                                    
+                                    {/* Time */}
+                                    <div className="flex items-center gap-1 text-[10px] text-gray-400 font-medium pl-1">
+                                      <svg className="w-3 h-3 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                       </svg>
-                                      {cls.faculty}
+                                      {cls.time}
                                     </div>
-                                  )}
+
+                                    {/* Meta Row: Room Badge and Faculty */}
+                                    <div className="flex flex-wrap items-center justify-between gap-1.5 pt-2 border-t border-white/5 pl-1">
+                                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded-md">
+                                        <svg className="w-2.5 h-2.5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        </svg>
+                                        {cls.room}
+                                      </span>
+
+                                      {cls.faculty && (
+                                        <span className="text-[9px] text-gray-500 font-medium truncate max-w-[80px]" title={cls.faculty}>
+                                          {cls.faculty}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
+                              ))
+                            ) : (
+                              <div className="flex-1 flex flex-col items-center justify-center text-center py-10 px-2 border border-dashed border-white/5 rounded-xl min-h-[140px] bg-white/[0.01]">
+                                <svg className="w-5 h-5 text-gray-600 mb-2 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                                <span className="text-[9px] text-gray-600 font-bold uppercase tracking-wider">Rest Day</span>
                               </div>
-                            ))
-                          ) : (
-                            <div className="flex-1 flex flex-col items-center justify-center text-center p-4 border border-dashed border-white/5 rounded-xl my-auto">
-                              <span className="text-[10px] text-gray-600 font-bold uppercase tracking-wider">Rest Day</span>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}
