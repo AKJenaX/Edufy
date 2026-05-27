@@ -11,6 +11,17 @@ if (!$ollamaRunning) {
 }
 Write-Host "✅ Ollama is running" -ForegroundColor Green
 
+# Ensure configured Ollama models are available
+Write-Host "`nChecking Ollama models: llama3, mistral..." -ForegroundColor Yellow
+$availableModels = ollama list
+foreach ($model in @("llama3", "mistral")) {
+    if (!($availableModels | Select-String -Pattern "^$model")) {
+        Write-Host "Pulling $model model. This can take a while the first time..." -ForegroundColor Yellow
+        ollama pull $model
+    }
+}
+Write-Host "llama3 and mistral models are available" -ForegroundColor Green
+
 # Start Backend
 Write-Host "`n🔧 Starting Backend Server..." -ForegroundColor Yellow
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend; .\.venv\Scripts\Activate.ps1; uvicorn main:app --reload --host localhost --port 8000"

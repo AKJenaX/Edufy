@@ -25,6 +25,7 @@ ENV/
 # Database
 *.db
 *.sqlite3
+uploads/
 
 # Logs
 *.log

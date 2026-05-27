@@ -30,9 +30,10 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 
 ### 🎯 Core Capabilities
 - **Role-Based Access Control** - Student, Faculty, and Admin role-based dashboards with granular permissions
-- **AI-Powered Assistant** - Integrated with Ollama (llama3 model) for intelligent responses
+- **AI-Powered Assistant** - Integrated with Ollama (`llama3` default, `mistral` alternate) for intelligent responses
 - **Voice Interaction** - Web Speech API integration for hands-free voice queries
 - **Document Processing** - Upload and analyze PDFs, DOCX, TXT files with intelligent summarization
+- **Sticky Study Notes** - Attach color-coded, page-aware sticky notes to uploaded study materials
 - **Smart Attendance** - Automated attendance tracking with risk assessment algorithms
 - **Timetable Generation** - AI-powered schedule optimization and conflict resolution
 - **Real-Time Analytics** - Comprehensive system-wide insights and performance metrics
@@ -44,6 +45,7 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 - 📈 Performance metrics and risk assessment notifications
 - 🤖 AI learning assistant with voice input capabilities
 - 📄 Document upload, analysis, and storage management
+- 🗒️ Sticky-note study board for uploaded PDFs and documents
 - 💡 Personalized recommendations based on performance
 - ❓ Quiz generation from study materials using AI
 - 📱 Responsive mobile-friendly interface
@@ -78,7 +80,7 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 - **Database**: MongoDB - NoSQL database with Motor async driver
 - **Authentication**: JWT (python-jose), Passlib with bcrypt
 - **AI/ML**: 
-  - Ollama integration for local LLM (llama3 model)
+  - Ollama integration for local LLMs (`llama3` and `mistral`)
   - LangChain for AI orchestration
   - PyPDF2 and python-docx for document processing
 - **Async**: Motor for async MongoDB operations
@@ -116,7 +118,7 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 
 ### Optional but Recommended
 - **Ollama** - For local LLM inference - [Download](https://ollama.ai/)
-  - After installation, pull the llama3 model: `ollama pull llama3`
+  - After installation, pull both models: `ollama pull llama3` and `ollama pull mistral`
 - **VS Code** with Python and REST Client extensions
 
 ---
@@ -168,7 +170,8 @@ cp .env.example .env
 # - MONGODB_URL: MongoDB connection string
 # - JWT_SECRET: Your secret key (change this!)
 # - OLLAMA_BASE_URL: URL where Ollama is running (default: http://localhost:11434)
-# - OLLAMA_MODEL: Model name (default: llama3)
+# - OLLAMA_MODEL: Default model name (default: llama3)
+# - OLLAMA_MODELS: Available model names (default: llama3,mistral)
 ```
 
 ### Step 3: Setup Frontend
@@ -389,6 +392,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 # Ollama AI
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=llama3
+OLLAMA_MODELS=llama3,mistral
 
 # Application
 APP_NAME=Edufy Smart Campus
@@ -465,8 +469,10 @@ mongod
 ```
 Error: Failed to connect to Ollama at http://localhost:11434
 ```
-**Solution**: Start Ollama and pull llama3 model:
+**Solution**: Start Ollama and pull both configured models:
 ```bash
+ollama pull llama3
+ollama pull mistral
 ollama run llama3
 ```
 
@@ -563,7 +569,7 @@ This project is licensed under the Educational License - see the LICENSE file fo
 - **Framework**: FastAPI (Python 3.9+)
 - **Database**: MongoDB with Motor (async driver)
 - **Authentication**: JWT with python-jose
-- **AI**: Ollama (llama3 model)
+- **AI**: Ollama (`llama3` default, `mistral` alternate)
 - **Document Processing**: PyPDF2, python-docx
 
 **Frontend**
@@ -587,7 +593,7 @@ This project is licensed under the Educational License - see the LICENSE file fo
 - Python 3.9 or higher
 - Node.js 18 or higher
 - MongoDB (local or cloud)
-- Ollama with llama3 model
+- Ollama with `llama3` and `mistral` models
 
 ### Installation
 
@@ -643,21 +649,21 @@ npm run dev
 
 ### Student Account
 ```
-Email: student@edify.com
+Email: student@edufy.com
 Password: student123
 ```
 **Access**: Student dashboard, AI assistant, attendance records
 
 ### Faculty Account
 ```
-Email: faculty@edify.com
+Email: faculty@edufy.com
 Password: faculty123
 ```
 **Access**: Faculty dashboard, attendance marking, timetable generation
 
 ### Admin Account
 ```
-Email: admin@edify.com
+Email: admin@edufy.com
 Password: admin123
 ```
 **Access**: Admin dashboard, user management, system analytics
@@ -683,7 +689,7 @@ Interactive API documentation available at:
 ## 📁 Project Structure
 
 ```
-Edify/
+Edufy/
 ├── backend/
 │   ├── main.py                 # FastAPI application
 │   ├── config.py              # Configuration
@@ -800,7 +806,7 @@ Follow the comprehensive [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) for comple
 - **UI Components**: 15+
 - **Database Models**: 4
 - **Supported Roles**: 3 (Student, Faculty, Admin)
-- **AI Integration**: Ollama (llama3)
+- **AI Integration**: Ollama (`llama3` and `mistral`)
 - **Voice Support**: Yes (Speech Recognition API)
 
 ---
@@ -838,6 +844,7 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=llama3
+OLLAMA_MODELS=llama3,mistral
 ```
 
 ### Frontend Environment Variables

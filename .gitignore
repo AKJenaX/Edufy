@@ -143,6 +143,7 @@ backend-server.log
 backend-server.err.log
 frontend-server.log
 frontend-server.err.log
+backend/uploads/
 
 # Certificates
 *.pem

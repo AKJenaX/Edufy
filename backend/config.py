@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "llama3"
+    OLLAMA_MODELS: str = "llama3,mistral"
     
     # Application
     APP_NAME: str = "Edufy Smart Campus"
@@ -41,6 +42,13 @@ class Settings(BaseSettings):
     @property
     def cors_origins_list(self) -> List[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
+
+    @property
+    def ollama_models_list(self) -> List[str]:
+        models = [model.strip() for model in self.OLLAMA_MODELS.split(",") if model.strip()]
+        if self.OLLAMA_MODEL not in models:
+            models.insert(0, self.OLLAMA_MODEL)
+        return models
     
     model_config = {
         "env_file": ".env",

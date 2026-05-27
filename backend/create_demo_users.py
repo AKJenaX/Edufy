@@ -19,7 +19,10 @@ async def create_demo_users():
     # Clear existing demo users
     print("Clearing existing demo users...")
     await users_collection.delete_many({
-        "email": {"$in": [
+            "email": {"$in": [
+            "student@edufy.com",
+            "faculty@edufy.com",
+            "admin@edufy.com",
             "student@edify.com",
             "faculty@edify.com",
             "admin@edify.com"
@@ -30,7 +33,7 @@ async def create_demo_users():
     now = datetime.now(timezone.utc)
     demo_users = [
         {
-            "email": "student@edify.com",
+            "email": "student@edufy.com",
             "full_name": "Demo Student",
             "role": "student",
             "hashed_password": pwd_context.hash("student123"),
@@ -40,7 +43,7 @@ async def create_demo_users():
             "updated_at": now
         },
         {
-            "email": "faculty@edify.com",
+            "email": "faculty@edufy.com",
             "full_name": "Demo Faculty",
             "role": "faculty",
             "hashed_password": pwd_context.hash("faculty123"),
@@ -50,7 +53,7 @@ async def create_demo_users():
             "updated_at": now
         },
         {
-            "email": "admin@edify.com",
+            "email": "admin@edufy.com",
             "full_name": "Demo Admin",
             "role": "admin",
             "hashed_password": pwd_context.hash("admin123"),
@@ -68,13 +71,13 @@ async def create_demo_users():
     print("Demo Accounts Created:")
     print("=" * 50)
     print("\nStudent Account:")
-    print("  Email: student@edify.com")
+    print("  Email: student@edufy.com")
     print("  Password: student123")
     print("\nFaculty Account:")
-    print("  Email: faculty@edify.com")
+    print("  Email: faculty@edufy.com")
     print("  Password: faculty123")
     print("\nAdmin Account:")
-    print("  Email: admin@edify.com")
+    print("  Email: admin@edufy.com")
     print("  Password: admin123")
     print("=" * 50)
     

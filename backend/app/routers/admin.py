@@ -15,8 +15,32 @@ from database.connection import (
 from datetime import datetime, timedelta
 from bson import ObjectId
 import random
+import time
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
+
+
+class SimpleCache:
+    def __init__(self):
+        self._items = {}
+
+    async def get(self, key: str):
+        item = self._items.get(key)
+        if not item:
+            return None
+
+        expires_at, value = item
+        if expires_at <= time.time():
+            self._items.pop(key, None)
+            return None
+
+        return value
+
+    async def set(self, key: str, value, expire_seconds: int = 300):
+        self._items[key] = (time.time() + expire_seconds, value)
+
+
+cache = SimpleCache()
 
 
 class TimetableRequest(BaseModel):

@@ -47,4 +47,25 @@ class Quiz(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
+
+class StickyNote(BaseModel):
+    id: Optional[str] = Field(alias="_id", default=None)
+    document_id: str
+    user_id: str
+    title: str
+    content: str
+    color: str = "yellow"
+    page_number: Optional[int] = None
+    position_x: int = 0
+    position_y: int = 0
+    pinned: bool = False
+    tags: List[str] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
 # Made with Bob

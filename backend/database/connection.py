@@ -69,6 +69,10 @@ def get_documents_collection():
     return db.get_collection("documents")
 
 
+def get_sticky_notes_collection():
+    return db.get_collection("sticky_notes")
+
+
 def get_timetable_collection():
     return db.get_collection("timetable")
 

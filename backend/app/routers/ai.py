@@ -15,21 +15,31 @@ router = APIRouter(prefix="/ai", tags=["AI Assistant"])
 
 class SummarizeRequest(BaseModel):
     document_id: str
+    model: Optional[str] = None
 
 
 class ExplainRequest(BaseModel):
     concept: str
     context: Optional[str] = None
+    model: Optional[str] = None
 
 
 class QuizRequest(BaseModel):
     document_id: str
     num_questions: int = 5
+    model: Optional[str] = None
 
 
 class ChatRequest(BaseModel):
     message: str
     document_id: Optional[str] = None
+    model: Optional[str] = None
+
+
+@router.get("/models")
+async def get_ai_models(current_user: UserResponse = Depends(get_current_user)):
+    """Get configured Ollama models."""
+    return ollama_service.available_models()
 
 
 @router.post("/summarize")
@@ -51,7 +61,7 @@ async def summarize_document(
     
     # Generate summary
     try:
-        summary = ollama_service.summarize(document["content"])
+        summary_result = ollama_service.summarize(document["content"], request.model)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
     
@@ -61,14 +71,16 @@ async def summarize_document(
         "user_id": current_user.id,
         "interaction_type": "summarize",
         "input_text": document["content"][:500],  # Store first 500 chars
-        "output_text": summary,
+        "output_text": summary_result.text,
+        "model": summary_result.model,
         "document_id": request.document_id,
         "created_at": datetime.utcnow()
     }
     await ai_interactions_collection.insert_one(interaction_data)
     
     return {
-        "summary": summary,
+        "summary": summary_result.text,
+        "model": summary_result.model,
         "document_id": request.document_id,
         "document_name": document["filename"]
     }
@@ -81,7 +93,7 @@ async def explain_concept(
 ):
     """Explain a concept using AI"""
     try:
-        explanation = ollama_service.explain(request.concept, request.context)
+        explanation_result = ollama_service.explain(request.concept, request.context, request.model)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
     
@@ -91,14 +103,16 @@ async def explain_concept(
         "user_id": current_user.id,
         "interaction_type": "explain",
         "input_text": request.concept,
-        "output_text": explanation,
+        "output_text": explanation_result.text,
+        "model": explanation_result.model,
         "created_at": datetime.utcnow()
     }
     await ai_interactions_collection.insert_one(interaction_data)
     
     return {
         "concept": request.concept,
-        "explanation": explanation
+        "explanation": explanation_result.text,
+        "model": explanation_result.model
     }
 
 
@@ -121,12 +135,16 @@ async def generate_quiz(
     
     # Generate quiz
     try:
-        quiz_text = ollama_service.generate_quiz(document["content"], request.num_questions)
+        quiz_result = ollama_service.generate_quiz(
+            document["content"],
+            request.num_questions,
+            request.model
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
     
     # Parse quiz text into structured format
-    questions = parse_quiz_text(quiz_text)
+    questions = parse_quiz_text(quiz_result.text)
     
     # Save interaction
     ai_interactions_collection = get_ai_interactions_collection()
@@ -134,7 +152,8 @@ async def generate_quiz(
         "user_id": current_user.id,
         "interaction_type": "quiz",
         "input_text": document["content"][:500],
-        "output_text": quiz_text,
+        "output_text": quiz_result.text,
+        "model": quiz_result.model,
         "document_id": request.document_id,
         "created_at": datetime.utcnow()
     }
@@ -144,7 +163,8 @@ async def generate_quiz(
         "document_id": request.document_id,
         "document_name": document["filename"],
         "questions": questions,
-        "raw_quiz": quiz_text
+        "raw_quiz": quiz_result.text,
+        "model": quiz_result.model
     }
 
 
@@ -170,7 +190,7 @@ async def chat_with_ai(
     
     # Generate response
     try:
-        response = ollama_service.chat(request.message, context)
+        chat_result = ollama_service.chat(request.message, context, request.model)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
     
@@ -180,7 +200,8 @@ async def chat_with_ai(
         "user_id": current_user.id,
         "interaction_type": "chat",
         "input_text": request.message,
-        "output_text": response,
+        "output_text": chat_result.text,
+        "model": chat_result.model,
         "document_id": request.document_id,
         "created_at": datetime.utcnow()
     }
@@ -188,7 +209,8 @@ async def chat_with_ai(
     
     return {
         "message": request.message,
-        "response": response,
+        "response": chat_result.text,
+        "model": chat_result.model,
         "has_context": context is not None
     }
 

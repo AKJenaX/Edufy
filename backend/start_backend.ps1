@@ -1,6 +1,6 @@
-# Edify Backend Startup Script
+# Edufy Backend Startup Script
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Edify Backend Startup" -ForegroundColor Cyan
+Write-Host "  Edufy Backend Startup" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -32,7 +32,7 @@ Write-Host ""
 
 # Check if demo users exist
 Write-Host "Checking demo users..." -ForegroundColor Yellow
-$userCount = mongosh Edify --eval "db.users.countDocuments()" --quiet 2>&1
+$userCount = mongosh edify --eval "db.users.countDocuments()" --quiet 2>&1
 if ($userCount -eq "0" -or $userCount -eq 0) {
     Write-Host "✗ No users found in database" -ForegroundColor Red
     Write-Host "  Creating demo users..." -ForegroundColor Yellow

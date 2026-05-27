@@ -4,10 +4,13 @@ Tests basic functionality of all API endpoints
 """
 
 import requests
-import json
 from datetime import datetime
 
 BASE_URL = "http://localhost:8000"
+
+def print_skip(name, reason):
+    print(f"SKIP - {name}")
+    print(f"   {reason}")
 
 def print_test(name, passed):
     status = "✅ PASS" if passed else "❌ FAIL"
@@ -32,8 +35,8 @@ def test_auth_endpoints():
     try:
         response = requests.post(
             f"{BASE_URL}/auth/login",
-            json={
-                "email": "student@edify.com",
+            data={
+                "username": "student@edufy.com",
                 "password": "student123"
             }
         )
@@ -93,8 +96,8 @@ def test_faculty_endpoints():
     try:
         response = requests.post(
             f"{BASE_URL}/auth/login",
-            json={
-                "email": "faculty@edify.com",
+            data={
+                "username": "faculty@edufy.com",
                 "password": "faculty123"
             }
         )
@@ -132,8 +135,8 @@ def test_admin_endpoints():
     try:
         response = requests.post(
             f"{BASE_URL}/auth/login",
-            json={
-                "email": "admin@edify.com",
+            data={
+                "username": "admin@edufy.com",
                 "password": "admin123"
             }
         )
@@ -170,14 +173,21 @@ def test_ai_endpoints(token):
             f"{BASE_URL}/ai/chat",
             headers=headers,
             json={
-                "message": "What is machine learning?",
-                "context": []
-            }
+                "message": "Answer in one sentence: what is machine learning?",
+                "model": "llama3"
+            },
+            timeout=60
         )
+        if response.status_code == 500 and "AI service error" in response.text:
+            print_skip("POST /ai/chat", "Ollama is not available or did not respond")
+            return
+
         print_test("POST /ai/chat", response.status_code == 200)
         if response.status_code == 200:
             data = response.json()
             print(f"   Response length: {len(data.get('response', ''))} chars")
+    except requests.exceptions.Timeout:
+        print_skip("POST /ai/chat", "Ollama did not respond within 60 seconds")
     except Exception as e:
         print_test("POST /ai/chat", False)
         print(f"   Error: {e}")

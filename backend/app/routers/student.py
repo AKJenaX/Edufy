@@ -1,16 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
-from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from pydantic import BaseModel, Field
+from typing import Optional
 from app.dependencies import get_current_user, require_student
 from app.schemas.auth import UserResponse
-from app.models.student import AttendanceRecord, PerformanceMetrics
-from app.models.document import Document, AIInteraction
-from app.services.ollama_service import ollama_service
+from app.models.student import PerformanceMetrics
 from app.services.document_processor import document_processor
 from database.connection import (
     get_students_collection,
     get_attendance_collection,
     get_documents_collection,
-    get_ai_interactions_collection
+    get_sticky_notes_collection
 )
 from datetime import datetime
 from bson import ObjectId
@@ -18,6 +17,59 @@ import os
 import shutil
 
 router = APIRouter(prefix="/student", tags=["Student"])
+
+
+class StickyNoteCreate(BaseModel):
+    title: str = Field(default="Untitled note", max_length=80)
+    content: str = Field(default="", max_length=4000)
+    color: str = "yellow"
+    page_number: Optional[int] = Field(default=None, ge=1)
+    position_x: int = Field(default=0, ge=0)
+    position_y: int = Field(default=0, ge=0)
+    pinned: bool = False
+    tags: list[str] = Field(default_factory=list)
+
+
+class StickyNoteUpdate(BaseModel):
+    title: Optional[str] = Field(default=None, max_length=80)
+    content: Optional[str] = Field(default=None, max_length=4000)
+    color: Optional[str] = None
+    page_number: Optional[int] = Field(default=None, ge=1)
+    position_x: Optional[int] = Field(default=None, ge=0)
+    position_y: Optional[int] = Field(default=None, ge=0)
+    pinned: Optional[bool] = None
+    tags: Optional[list[str]] = None
+
+
+NOTE_COLORS = {"yellow", "pink", "blue", "green", "purple", "orange"}
+
+
+def serialize_document(document: dict, include_content: bool = False) -> dict:
+    document["_id"] = str(document["_id"])
+    if not include_content:
+        document.pop("content", None)
+    return document
+
+
+def serialize_note(note: dict) -> dict:
+    note["_id"] = str(note["_id"])
+    return note
+
+
+async def get_owned_document_or_404(document_id: str, user_id: str) -> dict:
+    if not ObjectId.is_valid(document_id):
+        raise HTTPException(status_code=400, detail="Invalid document id")
+
+    documents_collection = get_documents_collection()
+    document = await documents_collection.find_one({
+        "_id": ObjectId(document_id),
+        "user_id": user_id
+    })
+
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    return document
 
 
 @router.get("/profile")
@@ -195,9 +247,7 @@ async def get_user_documents(current_user: UserResponse = Depends(require_studen
     ).sort("uploaded_at", -1).to_list(length=50)
     
     for doc in documents:
-        doc["_id"] = str(doc["_id"])
-        # Don't return full content in list
-        doc.pop("content", None)
+        serialize_document(doc)
     
     return {"documents": documents}
 
@@ -208,17 +258,120 @@ async def get_document(
     current_user: UserResponse = Depends(require_student)
 ):
     """Get specific document"""
-    documents_collection = get_documents_collection()
-    
-    document = await documents_collection.find_one({
-        "_id": ObjectId(document_id),
+    document = await get_owned_document_or_404(document_id, current_user.id)
+    return serialize_document(document, include_content=True)
+
+
+@router.get("/document/{document_id}/notes")
+async def get_document_notes(
+    document_id: str,
+    current_user: UserResponse = Depends(require_student)
+):
+    """Get sticky notes for a student-owned document."""
+    await get_owned_document_or_404(document_id, current_user.id)
+
+    notes_collection = get_sticky_notes_collection()
+    notes = await notes_collection.find({
+        "document_id": document_id,
+        "user_id": current_user.id
+    }).sort([("pinned", -1), ("updated_at", -1)]).to_list(length=200)
+
+    return {"notes": [serialize_note(note) for note in notes]}
+
+
+@router.post("/document/{document_id}/notes", status_code=201)
+async def create_document_note(
+    document_id: str,
+    note_data: StickyNoteCreate,
+    current_user: UserResponse = Depends(require_student)
+):
+    """Create a sticky note attached to a student-owned document."""
+    await get_owned_document_or_404(document_id, current_user.id)
+
+    color = note_data.color if note_data.color in NOTE_COLORS else "yellow"
+    now = datetime.utcnow()
+    note = {
+        "document_id": document_id,
+        "user_id": current_user.id,
+        "title": note_data.title.strip() or "Untitled note",
+        "content": note_data.content.strip(),
+        "color": color,
+        "page_number": note_data.page_number,
+        "position_x": note_data.position_x,
+        "position_y": note_data.position_y,
+        "pinned": note_data.pinned,
+        "tags": [tag.strip() for tag in note_data.tags if tag.strip()][:8],
+        "created_at": now,
+        "updated_at": now
+    }
+
+    notes_collection = get_sticky_notes_collection()
+    result = await notes_collection.insert_one(note)
+    created = await notes_collection.find_one({"_id": result.inserted_id})
+
+    return {"note": serialize_note(created)}
+
+
+@router.patch("/notes/{note_id}")
+async def update_document_note(
+    note_id: str,
+    note_data: StickyNoteUpdate,
+    current_user: UserResponse = Depends(require_student)
+):
+    """Update a sticky note owned by the current student."""
+    if not ObjectId.is_valid(note_id):
+        raise HTTPException(status_code=400, detail="Invalid note id")
+
+    notes_collection = get_sticky_notes_collection()
+    existing = await notes_collection.find_one({
+        "_id": ObjectId(note_id),
         "user_id": current_user.id
     })
-    
-    if not document:
-        raise HTTPException(status_code=404, detail="Document not found")
-    
-    document["_id"] = str(document["_id"])
-    return document
+
+    if not existing:
+        raise HTTPException(status_code=404, detail="Sticky note not found")
+
+    updates = {}
+    for field, value in note_data.model_dump(exclude_unset=True).items():
+        if field == "color" and value not in NOTE_COLORS:
+            continue
+        if field in {"title", "content"} and isinstance(value, str):
+            value = value.strip()
+        if field == "title" and not value:
+            value = "Untitled note"
+        if field == "tags" and value is not None:
+            value = [tag.strip() for tag in value if tag.strip()][:8]
+        updates[field] = value
+
+    if updates:
+        updates["updated_at"] = datetime.utcnow()
+        await notes_collection.update_one(
+            {"_id": ObjectId(note_id), "user_id": current_user.id},
+            {"$set": updates}
+        )
+
+    updated = await notes_collection.find_one({"_id": ObjectId(note_id)})
+    return {"note": serialize_note(updated)}
+
+
+@router.delete("/notes/{note_id}")
+async def delete_document_note(
+    note_id: str,
+    current_user: UserResponse = Depends(require_student)
+):
+    """Delete a sticky note owned by the current student."""
+    if not ObjectId.is_valid(note_id):
+        raise HTTPException(status_code=400, detail="Invalid note id")
+
+    notes_collection = get_sticky_notes_collection()
+    result = await notes_collection.delete_one({
+        "_id": ObjectId(note_id),
+        "user_id": current_user.id
+    })
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Sticky note not found")
+
+    return {"message": "Sticky note deleted"}
 
 # Made with Bob
