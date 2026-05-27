@@ -4,10 +4,8 @@ Run this script to populate the database with test accounts
 """
 import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
-from passlib.context import CryptContext  # type: ignore
+import bcrypt
 from datetime import datetime, timezone
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 async def create_demo_users():
     """Create demo users in MongoDB"""
@@ -36,7 +34,7 @@ async def create_demo_users():
             "email": "student@edufy.com",
             "full_name": "Demo Student",
             "role": "student",
-            "hashed_password": pwd_context.hash("student123"),
+            "hashed_password": bcrypt.hashpw("student123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             "is_active": True,
             "student_id": "STU001",
             "created_at": now,
@@ -46,7 +44,7 @@ async def create_demo_users():
             "email": "faculty@edufy.com",
             "full_name": "Demo Faculty",
             "role": "faculty",
-            "hashed_password": pwd_context.hash("faculty123"),
+            "hashed_password": bcrypt.hashpw("faculty123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             "is_active": True,
             "faculty_id": "FAC001",
             "created_at": now,
@@ -56,7 +54,7 @@ async def create_demo_users():
             "email": "admin@edufy.com",
             "full_name": "Demo Admin",
             "role": "admin",
-            "hashed_password": pwd_context.hash("admin123"),
+            "hashed_password": bcrypt.hashpw("admin123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             "is_active": True,
             "created_at": now,
             "updated_at": now
@@ -91,5 +89,3 @@ if __name__ == "__main__":
         print(f"ERROR: {e}")
         print("\nMake sure MongoDB is running on localhost:27017")
         print("Start MongoDB with: net start MongoDB")
-
-# Made with Bob
