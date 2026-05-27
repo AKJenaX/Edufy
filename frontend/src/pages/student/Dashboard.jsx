@@ -62,7 +62,7 @@ function StudentDashboard() {
       </div>
 
       {/* Performance Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
@@ -117,7 +117,7 @@ function StudentDashboard() {
       </div>
 
       {/* Performance Analytics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Attendance Overview</h2>
           <div className="h-64 flex items-center justify-center">
@@ -201,7 +201,7 @@ function StudentDashboard() {
       {/* Quick Actions */}
       <div className="card bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <a href="/student/ai-assistant" className="p-4 border-2 border-blue-200 dark:border-blue-900/40 rounded-lg hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
