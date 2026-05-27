@@ -1,44 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiShield, FiBookOpen, FiUsers } from 'react-icons/fi';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiShield, FiBookOpen, FiUsers, FiUser } from 'react-icons/fi';
 import { FaGraduationCap, FaBrain, FaGoogle } from 'react-icons/fa';
 import { MdAutoAwesome } from 'react-icons/md';
 import { BsShieldCheck } from 'react-icons/bs';
 
-function Login() {
-  const [role, setRole] = useState('Admin'); // Student, Faculty, Admin
+function Register() {
+  const [role, setRole] = useState('Student'); // Student, Faculty, Admin
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [facultyId, setFacultyId] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
-
-  // Auto-fill demo credentials when role changes
-  useEffect(() => {
-    if (role === 'Student') {
-      setEmail('student@edufy.com');
-      setPassword('student123');
-    } else if (role === 'Faculty') {
-      setEmail('faculty@edufy.com');
-      setPassword('faculty123');
-    } else if (role === 'Admin') {
-      setEmail('admin@edufy.com');
-      setPassword('admin123');
-    }
-  }, [role]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
+    setLoading(false);
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
     setLoading(true);
 
-    const result = await login(email, password);
+    const userData = {
+      email,
+      password,
+      full_name: fullName,
+      role: role.toLowerCase(),
+      student_id: role === 'Student' && studentId ? studentId : undefined,
+      faculty_id: role === 'Faculty' && facultyId ? facultyId : undefined,
+    };
+
+    const result = await register(userData);
 
     if (result.success) {
-      navigate('/dashboard');
+      setSuccessMsg('Registration successful! Redirecting to login...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } else {
       setError(result.error);
     }
@@ -75,12 +85,12 @@ function Login() {
             </div>
             
             <h2 className="text-5xl font-bold text-white mb-6 leading-tight">
-              Where curiosity meets <br/>
-              <span className="text-[#00e5ff]">intelligence.</span>
+              Create your <br/>
+              <span className="text-[#00e5ff]">Edufy account.</span>
             </h2>
             
             <p className="text-blue-100/80 text-lg mb-12 leading-relaxed">
-              One platform for students, faculty, and administrators — unified by analytics, automation, and a personal AI assistant.
+              Join the unified platform that empowers students, faculty, and administrators with intelligent analysis and productivity tools.
             </p>
 
             <div className="grid grid-cols-3 gap-4">
@@ -114,17 +124,23 @@ function Login() {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center p-8 sm:p-12">
-          <div className="w-full max-w-md">
-            <div className="mb-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-              <p className="text-gray-500">Sign in to continue to your dashboard.</p>
+        <div className="flex-1 flex items-center justify-center p-8 sm:p-12 overflow-y-auto">
+          <div className="w-full max-w-md my-8">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Request access</h2>
+              <p className="text-gray-500">Create your institutional account.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                   {error}
+                </div>
+              )}
+
+              {successMsg && (
+                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+                  {successMsg}
                 </div>
               )}
 
@@ -152,6 +168,24 @@ function Login() {
                 </div>
               </div>
 
+              {/* Full Name */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FiUser className="text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+
               {/* Email */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">Email address</label>
@@ -172,10 +206,7 @@ function Login() {
 
               {/* Password */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700">Password</label>
-                  <a href="#" className="text-sm font-medium text-[#1a237e] hover:underline">Forgot password?</a>
-                </div>
+                <label className="block text-sm font-medium text-gray-700">Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiLock className="text-gray-400" />
@@ -198,44 +229,62 @@ function Login() {
                 </div>
               </div>
 
+              {/* Conditional IDs */}
+              {role === 'Student' && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Student ID (Optional)</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FiBookOpen className="text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={studentId}
+                      onChange={(e) => setStudentId(e.target.value)}
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                      placeholder="e.g. STU123"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {role === 'Faculty' && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Faculty ID (Optional)</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FiUsers className="text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      value={facultyId}
+                      onChange={(e) => setFacultyId(e.target.value)}
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                      placeholder="e.g. FAC123"
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-[#1a237e] to-[#0ea5e9] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity shadow-lg shadow-blue-900/20 disabled:opacity-70"
               >
-                {loading ? 'Signing in...' : `Sign In as ${role}`}
+                {loading ? 'Creating Account...' : `Register as ${role}`}
                 {!loading && <FiArrowRight />}
               </button>
             </form>
 
-            {/* Divider */}
-            <div className="mt-8 mb-6 relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-400 text-xs">OR</span>
-              </div>
-            </div>
-
-            {/* Google Login */}
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <FaGoogle className="text-red-500" />
-              Continue with Google
-            </button>
-
             {/* Footer */}
             <p className="mt-8 text-center text-sm text-gray-500">
-              New to Edufy?{' '}
+              Already have an account?{' '}
               <span 
-                onClick={() => navigate('/register')} 
+                onClick={() => navigate('/login')} 
                 className="font-semibold text-[#1a237e] hover:underline cursor-pointer"
               >
-                Request access
+                Sign in
               </span>
             </p>
           </div>
@@ -245,4 +294,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

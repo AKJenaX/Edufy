@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import ToastProvider from './components/ToastProvider';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import StudentDashboard from './pages/student/Dashboard';
 import AIAssistant from './pages/student/AIAssistant';
 import FacultyDashboard from './pages/faculty/Dashboard';
@@ -99,6 +100,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       
       <Route
         path="/dashboard"
