@@ -180,7 +180,7 @@ function Register() {
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm text-gray-900 bg-white"
                     placeholder="John Doe"
                   />
                 </div>
@@ -198,7 +198,7 @@ function Register() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm text-gray-900 bg-white"
                     placeholder="you@edufy.edu"
                   />
                 </div>
@@ -216,7 +216,7 @@ function Register() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm text-gray-900 bg-white"
                     placeholder="••••••••"
                   />
                   <button
@@ -241,7 +241,7 @@ function Register() {
                       type="text"
                       value={studentId}
                       onChange={(e) => setStudentId(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm text-gray-900 bg-white"
                       placeholder="e.g. STU123"
                     />
                   </div>
@@ -259,7 +259,7 @@ function Register() {
                       type="text"
                       value={facultyId}
                       onChange={(e) => setFacultyId(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a237e] focus:border-transparent outline-none transition-all text-sm text-gray-900 bg-white"
                       placeholder="e.g. FAC123"
                     />
                   </div>
