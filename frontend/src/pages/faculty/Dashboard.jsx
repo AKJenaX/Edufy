@@ -526,15 +526,15 @@ function FacultyDashboard() {
                 )}
 
                 {/* Calendar Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
                   {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => {
                     const classes = generatedTimetable.timetable?.[day] || [];
                     return (
                       <div key={day} className="flex flex-col bg-white/[0.02] border border-white/5 rounded-2xl p-4 hover:border-indigo-500/20 duration-300 shadow-xl">
                         {/* Day Header */}
-                        <div className="flex justify-between items-center pb-3 border-b border-white/5 mb-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-3 border-b border-white/5 mb-4">
                           <h5 className="font-bold text-white text-sm tracking-tight">{day}</h5>
-                          <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wider ${classes.length > 0 ? 'bg-indigo-500/15 border border-indigo-500/20 text-indigo-300' : 'bg-white/5 text-gray-500 border border-white/5'}`}>
+                          <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wider w-max ${classes.length > 0 ? 'bg-indigo-500/15 border border-indigo-500/20 text-indigo-300' : 'bg-white/5 text-gray-500 border border-white/5'}`}>
                             {classes.length} {classes.length === 1 ? 'Class' : 'Classes'}
                           </span>
                         </div>
