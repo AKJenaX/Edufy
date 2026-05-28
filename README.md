@@ -29,6 +29,7 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 ## 🌟 Features
 
 ### 🎯 Core Capabilities
+- **Interactive 3D Landing Page** - Immersive, scroll-driven camera fly-through with custom extruded 3D logo geometries, dynamic waving matrix grids, organic cyber-fog particle clouds, and a seamless portal transition.
 - **Role-Based Access Control** - Student, Faculty, and Admin role-based dashboards with granular permissions
 - **AI-Powered Assistant** - Integrated with Ollama (`llama3` default, `mistral` alternate) for intelligent responses
 - **Voice Interaction** - Web Speech API integration for hands-free voice queries
@@ -87,6 +88,7 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 - **Validation**: Pydantic v2 with Pydantic Settings
 
 ### Frontend
+- **3D Engine**: Three.js 0.184.0 - Custom hardware-accelerated 3D geometries, physical materials, and procedural animations
 - **Framework**: React 19.2.5 - Latest React version with new features
 - **Build Tool**: Vite 8.0.10 - Lightning-fast frontend build tool
 - **Routing**: React Router DOM 7.14.2
@@ -573,6 +575,7 @@ This project is licensed under the Educational License - see the LICENSE file fo
 - **Document Processing**: PyPDF2, python-docx
 
 **Frontend**
+- **3D Engine**: Three.js
 - **Framework**: React 19 with Vite
 - **Styling**: Tailwind CSS
 - **Routing**: React Router DOM v6
