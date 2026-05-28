@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import ToastProvider from './components/ToastProvider';
+import SplashScreen3D from './components/SplashScreen3D';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import StudentDashboard from './pages/student/Dashboard';
@@ -45,7 +46,10 @@ function Layout({ children }) {
       <nav className="bg-[#070b19]/70 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
+              <div className="bg-white p-1 rounded-lg flex items-center justify-center shadow-sm h-8 w-8">
+                <img src="/logo.png" alt="Edufy Logo" className="h-6 w-auto object-contain" />
+              </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Edufy
               </h1>
@@ -226,12 +230,18 @@ function AppRoutes() {
 }
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <ThemeProvider>
       <Router>
         <AuthProvider>
           <ToastProvider />
-          <AppRoutes />
+          {showSplash ? (
+            <SplashScreen3D onEnter={() => setShowSplash(false)} />
+          ) : (
+            <AppRoutes />
+          )}
         </AuthProvider>
       </Router>
     </ThemeProvider>

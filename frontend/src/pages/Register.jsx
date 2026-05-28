@@ -69,8 +69,8 @@ function Register() {
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 text-white mb-24">
-            <div className="bg-[#0ea5e9] p-2 rounded-xl">
-              <FaGraduationCap className="text-2xl" />
+            <div className="bg-white p-1 rounded-xl flex items-center justify-center h-12 w-12 shadow-md">
+              <img src="/logo.png" alt="Edufy Logo" className="h-10 w-auto object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold leading-tight">Edufy</h1>
@@ -126,7 +126,8 @@ function Register() {
 
         <div className="flex-1 flex items-center justify-center p-8 sm:p-12 overflow-y-auto">
           <div className="w-full max-w-md my-8">
-            <div className="mb-8">
+            <div className="mb-8 text-center lg:text-left">
+              <img src="/logo.png" alt="Edufy Logo" className="h-16 w-auto mb-6 mx-auto lg:mx-0 object-contain" />
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Request access</h2>
               <p className="text-gray-500">Create your institutional account.</p>
             </div>
