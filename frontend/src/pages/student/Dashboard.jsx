@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
 import axios from 'axios';
 import { API_URL } from '../../config';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 function StudentDashboard() {
   const { user } = useAuth();
-  const { isDark } = useTheme();
   const [performance, setPerformance] = useState(null);
   const [loading, setLoading] = useState(true);
 

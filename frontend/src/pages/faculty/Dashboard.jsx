@@ -2,17 +2,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../config';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 function FacultyDashboard() {
   const { token } = useAuth();
-  const { isDark } = useTheme();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [error, setError] = useState(null);
-  const [selectedTimetableDay, setSelectedTimetableDay] = useState('Monday');
 
   // Attendance Form State
   const [attendanceForm, setAttendanceForm] = useState({

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiShield, FiBookOpen, FiUsers, FiUser } from 'react-icons/fi';
-import { FaGraduationCap, FaBrain, FaGoogle } from 'react-icons/fa';
+import { FaBrain } from 'react-icons/fa';
 import { MdAutoAwesome } from 'react-icons/md';
 import { BsShieldCheck } from 'react-icons/bs';
 

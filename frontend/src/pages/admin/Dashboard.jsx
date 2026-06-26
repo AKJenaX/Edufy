@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../config';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 
 function AdminDashboard() {
   const { token } = useAuth();
-  const { isDark } = useTheme();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');

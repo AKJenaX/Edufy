@@ -82,7 +82,6 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 - **Authentication**: JWT (python-jose), Passlib with bcrypt
 - **AI/ML**: 
   - Groq Cloud API integration (`openai/gpt-oss-20b` and `openai/gpt-oss-120b`)
-  - LangChain for AI orchestration
   - PyPDF2 and python-docx for document processing
 - **Async**: Motor for async MongoDB operations
 - **Validation**: Pydantic v2 with Pydantic Settings
@@ -348,7 +347,6 @@ Edufy/
 ### Authentication
 - `POST /auth/register` - Register a new user
 - `POST /auth/login` - Login and get JWT token
-- `POST /auth/refresh` - Refresh access token
 
 ### Student Endpoints
 - `GET /student/dashboard` - Get student dashboard data
@@ -434,10 +432,10 @@ cd backend
 python create_demo_users.py
 ```
 
-This creates sample users:
-- **Admin**: admin@edufy.com / password123
-- **Faculty**: faculty@edufy.com / password123
-- **Students**: student1@edufy.com, student2@edufy.com / password123
+This creates the following demo accounts:
+- **Student**: student@edufy.com / student123
+- **Faculty**: faculty@edufy.com / faculty123
+- **Admin**: admin@edufy.com / admin123
 
 ---
 
@@ -496,11 +494,6 @@ Update `CORS_ORIGINS` in backend `.env` to match your frontend URL
 
 ## 🚀 Deployment
 
-### Docker Deployment
-```bash
-# Build and run with Docker
-docker-compose up --build
-```
 
 ### Cloud Deployment
 - **Backend**: Deploy on AWS EC2, Google Cloud, or Heroku
