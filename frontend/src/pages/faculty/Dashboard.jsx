@@ -32,9 +32,36 @@ function FacultyDashboard() {
   const [timetableLoading, setTimetableLoading] = useState(false);
   const [generatedTimetable, setGeneratedTimetable] = useState(null);
 
+  // Student List State
+  const [students, setStudents] = useState([]);
+  const [studentsLoading, setStudentsLoading] = useState(false);
+  const [studentsError, setStudentsError] = useState(null);
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'attendance') {
+      fetchStudents();
+    }
+  }, [activeTab]);
+
+  const fetchStudents = async () => {
+    try {
+      setStudentsLoading(true);
+      setStudentsError(null);
+      const response = await axios.get(`${API_URL}/faculty/students`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStudents(response.data.students || []);
+    } catch (err) {
+      console.error('Error fetching students:', err);
+      setStudentsError('Failed to load students');
+    } finally {
+      setStudentsLoading(false);
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -383,16 +410,29 @@ function FacultyDashboard() {
             <form onSubmit={handleMarkAttendance} className="space-y-5">
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
-                  Student ID
+                  Student
                 </label>
-                <input
-                  type="text"
-                  value={attendanceForm.student_id}
-                  onChange={(e) => setAttendanceForm({ ...attendanceForm, student_id: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all duration-200"
-                  placeholder="e.g., STU001"
-                  required
-                />
+                {studentsLoading ? (
+                  <p className="text-sm text-gray-400">Loading students...</p>
+                ) : studentsError ? (
+                  <p className="text-sm text-rose-400">{studentsError}</p>
+                ) : students.length === 0 ? (
+                  <p className="text-sm text-gray-400">No students found</p>
+                ) : (
+                  <select
+                    value={attendanceForm.student_id}
+                    onChange={(e) => setAttendanceForm({ ...attendanceForm, student_id: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-900 border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all duration-200"
+                    required
+                  >
+                    <option value="" disabled>Select a student</option>
+                    {students.map((student) => (
+                      <option key={student._id} value={student._id}>
+                        {student.full_name} ({student.email})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div className="space-y-2">

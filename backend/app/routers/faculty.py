@@ -9,7 +9,8 @@ from database.connection import (
     get_faculty_collection,
     get_attendance_collection,
     get_leave_collection,
-    get_students_collection
+    get_students_collection,
+    get_users_collection
 )
 from datetime import datetime
 from bson import ObjectId
@@ -198,12 +199,13 @@ async def mark_bulk_attendance(
 @router.get("/students")
 async def get_students_list(current_user: UserResponse = Depends(require_faculty)):
     """Get list of students"""
-    students_collection = get_students_collection()
+    users_collection = get_users_collection()
     
-    students = await students_collection.find().limit(100).to_list(length=100)
+    students = await users_collection.find({"role": "student"}).limit(100).to_list(length=100)
     
     for student in students:
         student["_id"] = str(student["_id"])
+        student.pop("hashed_password", None)
     
     return {"students": students}
 
