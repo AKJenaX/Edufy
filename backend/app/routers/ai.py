@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from app.dependencies import get_current_user
 from app.schemas.auth import UserResponse
-from app.services.ollama_service import ollama_service
+from app.services.groq_service import groq_service
 from database.connection import get_documents_collection, get_ai_interactions_collection
 from bson import ObjectId
 from datetime import datetime
@@ -38,8 +38,8 @@ class ChatRequest(BaseModel):
 
 @router.get("/models")
 async def get_ai_models(current_user: UserResponse = Depends(get_current_user)):
-    """Get configured Ollama models."""
-    return ollama_service.available_models()
+    """Get configured Groq models."""
+    return groq_service.available_models()
 
 
 @router.post("/summarize")
@@ -61,7 +61,7 @@ async def summarize_document(
     
     # Generate summary
     try:
-        summary_result = ollama_service.summarize(document["content"], request.model)
+        summary_result = groq_service.summarize(document["content"], request.model)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
     
@@ -93,7 +93,7 @@ async def explain_concept(
 ):
     """Explain a concept using AI"""
     try:
-        explanation_result = ollama_service.explain(request.concept, request.context, request.model)
+        explanation_result = groq_service.explain(request.concept, request.context, request.model)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
     
@@ -135,7 +135,7 @@ async def generate_quiz(
     
     # Generate quiz
     try:
-        quiz_result = ollama_service.generate_quiz(
+        quiz_result = groq_service.generate_quiz(
             document["content"],
             request.num_questions,
             request.model
@@ -190,7 +190,7 @@ async def chat_with_ai(
     
     # Generate response
     try:
-        chat_result = ollama_service.chat(request.message, context, request.model)
+        chat_result = groq_service.chat(request.message, context, request.model)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
     

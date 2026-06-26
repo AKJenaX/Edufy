@@ -45,8 +45,8 @@ function AIAssistant() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [documents, setDocuments] = useState([]);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
-  const [availableModels, setAvailableModels] = useState(['llama3', 'mistral']);
-  const [selectedModel, setSelectedModel] = useState('llama3');
+  const [availableModels, setAvailableModels] = useState(['openai/gpt-oss-20b', 'openai/gpt-oss-120b']);
+  const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-20b');
   const [notes, setNotes] = useState([]);
   const [noteDraft, setNoteDraft] = useState(defaultNoteDraft);
   const [notesLoading, setNotesLoading] = useState(false);
@@ -87,8 +87,8 @@ function AIAssistant() {
           axios.get(`${API_URL}/student/documents`, { headers: authHeaders }),
         ]);
 
-        setAvailableModels(modelsResponse.data.models || ['llama3', 'mistral']);
-        setSelectedModel(modelsResponse.data.default_model || 'llama3');
+        setAvailableModels(modelsResponse.data.models || ['openai/gpt-oss-20b', 'openai/gpt-oss-120b']);
+        setSelectedModel(modelsResponse.data.default_model || 'openai/gpt-oss-20b');
 
         const userDocuments = documentsResponse.data.documents || [];
         setDocuments(userDocuments);

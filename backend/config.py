@@ -13,10 +13,11 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
-    # Ollama
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama3"
-    OLLAMA_MODELS: str = "llama3,mistral"
+    # Groq
+    GROQ_API_KEY: str
+    GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
+    GROQ_MODEL: str = "openai/gpt-oss-20b"
+    GROQ_MODELS: str = "openai/gpt-oss-20b,openai/gpt-oss-120b"
     
     # Application
     APP_NAME: str = "Edufy Smart Campus"
@@ -44,10 +45,10 @@ class Settings(BaseSettings):
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
 
     @property
-    def ollama_models_list(self) -> List[str]:
-        models = [model.strip() for model in self.OLLAMA_MODELS.split(",") if model.strip()]
-        if self.OLLAMA_MODEL not in models:
-            models.insert(0, self.OLLAMA_MODEL)
+    def groq_models_list(self) -> List[str]:
+        models = [model.strip() for model in self.GROQ_MODELS.split(",") if model.strip()]
+        if self.GROQ_MODEL not in models:
+            models.insert(0, self.GROQ_MODEL)
         return models
     
     model_config = {

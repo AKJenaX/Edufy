@@ -4,7 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-19.2-blue.svg)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Latest-green.svg)](https://www.mongodb.com/)
-[![Ollama](https://img.shields.io/badge/Ollama-AI%20Powered-orange.svg)](https://ollama.ai/)
+[![Groq](https://img.shields.io/badge/Groq-AI%20Powered-orange.svg)](https://groq.com/)
 [![License](https://img.shields.io/badge/License-Educational-yellow.svg)]()
 
 A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-powered assistance with voice interaction, attendance tracking, and advanced analytics. Built with FastAPI backend and modern React frontend.
@@ -31,7 +31,7 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 ### 🎯 Core Capabilities
 - **Interactive 3D Landing Page** - Immersive, scroll-driven camera fly-through with custom extruded 3D logo geometries, dynamic waving matrix grids, organic cyber-fog particle clouds, and a seamless portal transition.
 - **Role-Based Access Control** - Student, Faculty, and Admin role-based dashboards with granular permissions
-- **AI-Powered Assistant** - Integrated with Ollama (`llama3` default, `mistral` alternate) for intelligent responses
+- **AI-Powered Assistant** - Integrated with Groq (`openai/gpt-oss-20b` default, `openai/gpt-oss-120b` fallback) for ultra-fast intelligent responses
 - **Voice Interaction** - Web Speech API integration for hands-free voice queries
 - **Document Processing** - Upload and analyze PDFs, DOCX, TXT files with intelligent summarization
 - **Sticky Study Notes** - Attach color-coded, page-aware sticky notes to uploaded study materials
@@ -81,7 +81,7 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 - **Database**: MongoDB - NoSQL database with Motor async driver
 - **Authentication**: JWT (python-jose), Passlib with bcrypt
 - **AI/ML**: 
-  - Ollama integration for local LLMs (`llama3` and `mistral`)
+  - Groq Cloud API integration (`openai/gpt-oss-20b` and `openai/gpt-oss-120b`)
   - LangChain for AI orchestration
   - PyPDF2 and python-docx for document processing
 - **Async**: Motor for async MongoDB operations
@@ -118,9 +118,8 @@ A comprehensive **Smart Campus AI System** featuring role-based dashboards, AI-p
 - **Git** - [Download](https://git-scm.com/)
 - **MongoDB** - [Download](https://www.mongodb.com/try/download/community) or use MongoDB Atlas (Cloud)
 
-### Optional but Recommended
-- **Ollama** - For local LLM inference - [Download](https://ollama.ai/)
-  - After installation, pull both models: `ollama pull llama3` and `ollama pull mistral`
+### Required
+- **Groq API Key** - For AI-powered assistance (chat, quiz generation, etc.) - [Get Key](https://console.groq.com/)
 - **VS Code** with Python and REST Client extensions
 
 ---

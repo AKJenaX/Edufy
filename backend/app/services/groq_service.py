@@ -10,16 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class OllamaResult:
+class GroqResult:
     text: str
     model: str
 
 
-class OllamaService:
+class GroqService:
     def __init__(self):
-        self.base_url = settings.OLLAMA_BASE_URL
-        self.default_model = settings.OLLAMA_MODEL
-        self.models = settings.ollama_models_list
+        self.base_url = settings.GROQ_BASE_URL
+        self.default_model = settings.GROQ_MODEL
+        self.models = settings.groq_models_list
 
     def _model_candidates(self, requested_model: Optional[str] = None) -> list[str]:
         if requested_model:
@@ -38,36 +38,42 @@ class OllamaService:
         prompt: str,
         system: Optional[str] = None,
         model: Optional[str] = None
-    ) -> OllamaResult:
-        """Generate a response from Ollama using the requested model or configured fallback order."""
-        url = f"{self.base_url}/api/generate"
+    ) -> GroqResult:
+        """Generate a response from Groq using the requested model or configured fallback order."""
+        url = f"{self.base_url}/chat/completions"
         errors = []
+        headers = {
+            "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
 
         for candidate_model in self._model_candidates(model):
+            messages = []
+            if system:
+                messages.append({"role": "system", "content": system})
+            messages.append({"role": "user", "content": prompt})
+
             payload = {
                 "model": candidate_model,
-                "prompt": prompt,
-                "stream": False
+                "messages": messages
             }
 
-            if system:
-                payload["system"] = system
-
             try:
-                response = requests.post(url, json=payload, timeout=60)
+                response = requests.post(url, json=payload, headers=headers, timeout=60)
                 response.raise_for_status()
                 result = response.json()
-                return OllamaResult(
-                    text=result.get("response", ""),
+                text = result["choices"][0]["message"]["content"]
+                return GroqResult(
+                    text=text,
                     model=candidate_model
                 )
-            except requests.exceptions.RequestException as e:
-                logger.error(f"Ollama API error for model {candidate_model}: {e}")
+            except Exception as e:
+                logger.error(f"Groq API error for model {candidate_model}: {e}")
                 errors.append(f"{candidate_model}: {str(e)}")
 
         raise Exception(f"Failed to generate response: {'; '.join(errors)}")
 
-    def summarize(self, content: str, model: Optional[str] = None) -> OllamaResult:
+    def summarize(self, content: str, model: Optional[str] = None) -> GroqResult:
         """Summarize educational content."""
         system = "You are an educational AI assistant. Provide clear, concise summaries suitable for students."
 
@@ -85,7 +91,7 @@ Provide a summary that captures the key points and main ideas."""
         concept: str,
         context: Optional[str] = None,
         model: Optional[str] = None
-    ) -> OllamaResult:
+    ) -> GroqResult:
         """Explain a concept."""
         system = "You are an educational AI assistant. Explain concepts in simple, easy-to-understand terms with examples."
 
@@ -110,7 +116,7 @@ Concept: {concept}"""
         content: str,
         num_questions: int = 5,
         model: Optional[str] = None
-    ) -> OllamaResult:
+    ) -> GroqResult:
         """Generate quiz questions from content."""
         system = "You are an educational AI assistant. Generate multiple-choice questions to test understanding."
 
@@ -136,7 +142,7 @@ Separate each question with a blank line."""
         message: str,
         context: Optional[str] = None,
         model: Optional[str] = None
-    ) -> OllamaResult:
+    ) -> GroqResult:
         """Chat with AI assistant."""
         system = "You are a helpful educational AI assistant. Answer questions clearly and provide helpful explanations."
 
@@ -159,6 +165,4 @@ Provide a helpful, educational response."""
         }
 
 
-ollama_service = OllamaService()
-
-# Made with Bob
+groq_service = GroqService()

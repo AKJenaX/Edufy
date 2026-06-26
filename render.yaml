@@ -16,10 +16,8 @@ services:
         sync: false              # user fills in their MongoDB Atlas URI
       - key: JWT_SECRET
         generateValue: true      # Render auto-generates a secure secret
-      - key: OLLAMA_BASE_URL
-        value: http://localhost:11434
-      - key: OLLAMA_MODEL
-        value: llama3
+      - key: GROQ_API_KEY
+        sync: false
       - key: CORS_ORIGINS
         value: https://edufy.onrender.com,https://edufy-frontend.onrender.com
       - key: DEBUG
