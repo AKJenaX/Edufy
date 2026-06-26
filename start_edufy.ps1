@@ -1,26 +1,20 @@
 # Edufy Startup Script
 Write-Host "🚀 Starting Edufy System..." -ForegroundColor Cyan
 
-# Start Ollama (if not running)
-Write-Host "`n📡 Checking Ollama..." -ForegroundColor Yellow
-$ollamaRunning = Get-Process ollama -ErrorAction SilentlyContinue
-if (!$ollamaRunning) {
-    Write-Host "Starting Ollama service..." -ForegroundColor Yellow
-    Start-Process "ollama" -ArgumentList "serve" -WindowStyle Hidden
-    Start-Sleep -Seconds 3
-}
-Write-Host "✅ Ollama is running" -ForegroundColor Green
-
-# Ensure configured Ollama models are available
-Write-Host "`nChecking Ollama models: llama3, mistral..." -ForegroundColor Yellow
-$availableModels = ollama list
-foreach ($model in @("llama3", "mistral")) {
-    if (!($availableModels | Select-String -Pattern "^$model")) {
-        Write-Host "Pulling $model model. This can take a while the first time..." -ForegroundColor Yellow
-        ollama pull $model
+# Check Groq configuration
+Write-Host "`n📡 Checking Groq API Key..." -ForegroundColor Yellow
+$envPath = "backend/.env"
+if (Test-Path $envPath) {
+    $envContent = Get-Content $envPath
+    $hasKey = $envContent | Select-String -Pattern "^GROQ_API_KEY=\S+"
+    if (!$hasKey) {
+        Write-Warning "GROQ_API_KEY is not set in backend/.env! AI features will not work."
+    } else {
+        Write-Host "✅ GROQ_API_KEY is configured in .env" -ForegroundColor Green
     }
+} else {
+    Write-Warning "backend/.env file not found! AI features will not work without GROQ_API_KEY."
 }
-Write-Host "llama3 and mistral models are available" -ForegroundColor Green
 
 # Start Backend
 Write-Host "`n🔧 Starting Backend Server..." -ForegroundColor Yellow

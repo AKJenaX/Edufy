@@ -1,6 +1,6 @@
 # Edufy Project Summary
 
-Edufy is a smart campus platform built with FastAPI, React, MongoDB, and an optional Ollama-backed AI assistant.
+Edufy is a smart campus platform built with FastAPI, React, MongoDB, and a Groq-backed AI assistant.
 
 ## Core Areas
 
@@ -15,7 +15,7 @@ Edufy is a smart campus platform built with FastAPI, React, MongoDB, and an opti
 - Backend: FastAPI, Motor, PyMongo, Pydantic
 - Frontend: React, Vite, Tailwind CSS, Recharts
 - Database: MongoDB
-- AI: Ollama HTTP API using `llama3` by default with `mistral` available as an alternate model
+- AI: Groq Cloud API using `openai/gpt-oss-20b` by default with `openai/gpt-oss-120b` available as fallback model
 
 ## Current Status
 

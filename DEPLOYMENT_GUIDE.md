@@ -4,12 +4,7 @@
 
 1. Provision MongoDB and set `MONGODB_URL`.
 2. Set a strong `JWT_SECRET`.
-3. Install Ollama and pull the configured model if AI features are enabled:
-
-```powershell
-ollama pull llama3
-ollama pull mistral
-```
+3. Configure `GROQ_API_KEY` with your Groq API key in the environment variables (already defined in `render.yaml` for Render).
 
 4. Install dependencies:
 
@@ -41,4 +36,4 @@ Deploy `frontend/dist` to a static host. Configure the frontend environment or A
 - Use HTTPS in front of the API and frontend.
 - Configure process supervision for the backend.
 - Back up MongoDB regularly.
-- Monitor API, database, and Ollama availability.
+- Monitor API, database, and Groq API availability.

@@ -170,9 +170,10 @@ cp .env.example .env
 # Important settings:
 # - MONGODB_URL: MongoDB connection string
 # - JWT_SECRET: Your secret key (change this!)
-# - OLLAMA_BASE_URL: URL where Ollama is running (default: http://localhost:11434)
-# - OLLAMA_MODEL: Default model name (default: llama3)
-# - OLLAMA_MODELS: Available model names (default: llama3,mistral)
+# - GROQ_API_KEY: Your Groq API key from console.groq.com
+# - GROQ_BASE_URL: Base URL for Groq API (default: https://api.groq.com/openai/v1)
+# - GROQ_MODEL: Default model name (default: openai/gpt-oss-20b)
+# - GROQ_MODELS: Available model names (default: openai/gpt-oss-20b,openai/gpt-oss-120b)
 ```
 
 ### Step 3: Setup Frontend
@@ -293,7 +294,7 @@ Edufy/
 │   │   ├── services/                # Business logic
 │   │   │   ├── auth.py              # Auth service
 │   │   │   ├── document_processor.py # Document processing
-│   │   │   └── ollama_service.py    # Ollama AI service
+│   │   │   └── groq_service.py      # Groq AI service
 │   │   └── dependencies.py          # Dependency injection
 │   ├── database/
 │   │   └── connection.py            # MongoDB connection
@@ -390,10 +391,11 @@ JWT_SECRET=your-secret-key-change-this
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
-# Ollama AI
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3
-OLLAMA_MODELS=llama3,mistral
+# Groq AI
+GROQ_API_KEY=your-groq-api-key-here
+GROQ_BASE_URL=https://api.groq.com/openai/v1
+GROQ_MODEL=openai/gpt-oss-20b
+GROQ_MODELS=openai/gpt-oss-20b,openai/gpt-oss-120b
 
 # Application
 APP_NAME=Edufy Smart Campus
@@ -466,16 +468,13 @@ Error: connect ECONNREFUSED 127.0.0.1:27017
 mongod
 ```
 
-### Ollama Connection Error
+### Groq API Error
 ```
-Error: Failed to connect to Ollama at http://localhost:11434
+Error: 401 Unauthorized or Failed to connect to Groq
 ```
-**Solution**: Start Ollama and pull both configured models:
-```bash
-ollama pull llama3
-ollama pull mistral
-ollama run llama3
-```
+**Solution**:
+- **401 Unauthorized**: Ensure `GROQ_API_KEY` is correctly set in your backend `.env` file and is a valid key from [Groq Console](https://console.groq.com/).
+- **Connection Error / Timeout**: Check your internet connection. Since Groq is a remote cloud service, ensure your network has access to `https://api.groq.com` and that Groq services are online.
 
 ### Port Already in Use
 **Backend (8000)**:
@@ -515,7 +514,7 @@ docker-compose up --build
 - **FastAPI Docs**: https://fastapi.tiangolo.com/
 - **React Docs**: https://react.dev/
 - **MongoDB Docs**: https://docs.mongodb.com/
-- **Ollama**: https://ollama.ai/
+- **Groq**: https://console.groq.com/
 - **Tailwind CSS**: https://tailwindcss.com/
 
 ---
@@ -550,7 +549,7 @@ This project is licensed under the Educational License - see the LICENSE file fo
 
 - FastAPI framework for the robust backend
 - React and Vite for modern frontend development
-- Ollama for local AI model integration
+- Groq Cloud API for fast AI features
 - MongoDB for flexible data storage
 - Tailwind CSS for beautiful styling
 
@@ -570,7 +569,7 @@ This project is licensed under the Educational License - see the LICENSE file fo
 - **Framework**: FastAPI (Python 3.9+)
 - **Database**: MongoDB with Motor (async driver)
 - **Authentication**: JWT with python-jose
-- **AI**: Ollama (`llama3` default, `mistral` alternate)
+- **AI**: Groq (`openai/gpt-oss-20b` default, `openai/gpt-oss-120b` fallback)
 - **Document Processing**: PyPDF2, python-docx
 
 **Frontend**
@@ -595,7 +594,7 @@ This project is licensed under the Educational License - see the LICENSE file fo
 - Python 3.9 or higher
 - Node.js 18 or higher
 - MongoDB (local or cloud)
-- Ollama with `llama3` and `mistral` models
+- Groq API Key from console.groq.com
 
 ### Installation
 
@@ -808,7 +807,7 @@ Follow the comprehensive [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) for comple
 - **UI Components**: 15+
 - **Database Models**: 4
 - **Supported Roles**: 3 (Student, Faculty, Admin)
-- **AI Integration**: Ollama (`llama3` and `mistral`)
+- **AI Integration**: Groq (`openai/gpt-oss-20b` and `openai/gpt-oss-120b`)
 - **Voice Support**: Yes (Speech Recognition API)
 
 ---
@@ -844,9 +843,10 @@ DATABASE_NAME=edify
 SECRET_KEY=your-secret-key-here
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3
-OLLAMA_MODELS=llama3,mistral
+GROQ_API_KEY=your-groq-api-key-here
+GROQ_BASE_URL=https://api.groq.com/openai/v1
+GROQ_MODEL=openai/gpt-oss-20b
+GROQ_MODELS=openai/gpt-oss-20b,openai/gpt-oss-120b
 ```
 
 ### Frontend Environment Variables
@@ -879,7 +879,7 @@ This project is for educational purposes.
 
 - **FastAPI** - Modern Python web framework
 - **React** - UI library
-- **Ollama** - Local AI integration
+- **Groq** - Cloud AI integration
 - **MongoDB** - Database
 - **Tailwind CSS** - Styling framework
 

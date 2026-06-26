@@ -174,12 +174,12 @@ def test_ai_endpoints(token):
             headers=headers,
             json={
                 "message": "Answer in one sentence: what is machine learning?",
-                "model": "llama3"
+                "model": "openai/gpt-oss-20b"
             },
             timeout=60
         )
         if response.status_code == 500 and "AI service error" in response.text:
-            print_skip("POST /ai/chat", "Ollama is not available or did not respond")
+            print_skip("POST /ai/chat", "Groq is not available or did not respond")
             return
 
         print_test("POST /ai/chat", response.status_code == 200)
@@ -187,7 +187,7 @@ def test_ai_endpoints(token):
             data = response.json()
             print(f"   Response length: {len(data.get('response', ''))} chars")
     except requests.exceptions.Timeout:
-        print_skip("POST /ai/chat", "Ollama did not respond within 60 seconds")
+        print_skip("POST /ai/chat", "Groq did not respond within 60 seconds")
     except Exception as e:
         print_test("POST /ai/chat", False)
         print(f"   Error: {e}")
@@ -224,7 +224,7 @@ def main():
     print("=" * 60)
     print("\nNote: Some tests may fail if:")
     print("  - MongoDB is not running")
-    print("  - Ollama is not running")
+    print("  - GROQ_API_KEY is not set or invalid")
     print("  - Demo accounts not created")
     print("\nRefer to SETUP_GUIDE.md for setup instructions.")
 

@@ -30,4 +30,4 @@ Run from the backend directory after starting the API:
 
 ## Notes
 
-The AI assistant requires Ollama to be running and the `llama3` and `mistral` models to be available.
+The AI assistant requires a valid GROQ_API_KEY to be configured in your .env file.
