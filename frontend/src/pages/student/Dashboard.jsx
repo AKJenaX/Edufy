@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import axios from 'axios';
+import { API_URL } from '../../config';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 function StudentDashboard() {
@@ -16,7 +17,7 @@ function StudentDashboard() {
 
   const fetchPerformance = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/student/performance');
+      const response = await axios.get(`${API_URL}/student/performance`);
       setPerformance(response.data);
     } catch (error) {
       console.error('Error fetching performance:', error);

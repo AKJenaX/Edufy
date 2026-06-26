@@ -1,0 +1,46 @@
+# Render Blueprint – deploy both frontend and backend with one click.
+# https://render.com/docs/blueprint-spec
+
+services:
+  # ── Backend (FastAPI Web Service) ──────────────────────────────
+  - type: web
+    name: edufy-api
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONGODB_URL
+        sync: false              # user fills in their MongoDB Atlas URI
+      - key: JWT_SECRET
+        generateValue: true      # Render auto-generates a secure secret
+      - key: OLLAMA_BASE_URL
+        value: http://localhost:11434
+      - key: OLLAMA_MODEL
+        value: llama3
+      - key: CORS_ORIGINS
+        value: https://edufy.onrender.com,https://edufy-frontend.onrender.com
+      - key: DEBUG
+        value: "false"
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+    healthCheckPath: /health
+
+  # ── Frontend (React Static Site) ───────────────────────────────
+  - type: web
+    name: edufy
+    runtime: static
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false              # user sets this to the backend URL after first deploy
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

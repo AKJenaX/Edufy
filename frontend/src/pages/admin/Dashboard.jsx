@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../config';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -37,7 +38,7 @@ function AdminDashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/admin/dashboard', {
+      const response = await axios.get(`${API_URL}/admin/dashboard`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDashboardData(response.data);
@@ -53,7 +54,7 @@ function AdminDashboard() {
   const fetchAnalytics = async () => {
     try {
       setAnalyticsLoading(true);
-      const response = await axios.get('http://localhost:8000/admin/analytics', {
+      const response = await axios.get(`${API_URL}/admin/analytics`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAnalyticsData(response.data);
@@ -68,7 +69,7 @@ function AdminDashboard() {
   const fetchUsers = async () => {
     try {
       setUsersLoading(true);
-      const response = await axios.get('http://localhost:8000/admin/users', {
+      const response = await axios.get(`${API_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(response.data.users || []);
@@ -82,7 +83,7 @@ function AdminDashboard() {
 
   const fetchSystemStats = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/admin/system/stats', {
+      const response = await axios.get(`${API_URL}/admin/system/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSystemStats(response.data);
@@ -97,7 +98,7 @@ function AdminDashboard() {
 
     try {
       await axios.post(
-        'http://localhost:8000/admin/users',
+        `${API_URL}/admin/users`,
         newUserForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );

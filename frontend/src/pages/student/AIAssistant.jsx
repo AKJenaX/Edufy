@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../config';
 import {
   FiBookOpen,
   FiFileText,
@@ -82,8 +83,8 @@ function AIAssistant() {
 
       try {
         const [modelsResponse, documentsResponse] = await Promise.all([
-          axios.get('http://localhost:8000/ai/models', { headers: authHeaders }),
-          axios.get('http://localhost:8000/student/documents', { headers: authHeaders }),
+          axios.get(`${API_URL}/ai/models`, { headers: authHeaders }),
+          axios.get(`${API_URL}/student/documents`, { headers: authHeaders }),
         ]);
 
         setAvailableModels(modelsResponse.data.models || ['llama3', 'mistral']);
@@ -112,7 +113,7 @@ function AIAssistant() {
       try {
         setNotesLoading(true);
         const response = await axios.get(
-          `http://localhost:8000/student/document/${selectedDocumentId}/notes`,
+          `${API_URL}/student/document/${selectedDocumentId}/notes`,
           { headers: authHeaders }
         );
         setNotes(response.data.notes || []);
@@ -140,7 +141,7 @@ function AIAssistant() {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:8000/student/document/upload', formData, {
+      const response = await axios.post(`${API_URL}/student/document/upload`, formData, {
         headers: {
           ...authHeaders,
           'Content-Type': 'multipart/form-data',
@@ -178,7 +179,7 @@ function AIAssistant() {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:8000/ai/summarize', {
+      const response = await axios.post(`${API_URL}/ai/summarize`, {
         document_id: selectedDocumentId,
         model: selectedModel,
       }, {
@@ -209,7 +210,7 @@ function AIAssistant() {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:8000/ai/quiz', {
+      const response = await axios.post(`${API_URL}/ai/quiz`, {
         document_id: selectedDocumentId,
         num_questions: 5,
         model: selectedModel,
@@ -247,7 +248,7 @@ function AIAssistant() {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:8000/ai/chat', {
+      const response = await axios.post(`${API_URL}/ai/chat`, {
         message: userMessage,
         document_id: selectedDocumentId,
         model: selectedModel,
@@ -303,7 +304,7 @@ function AIAssistant() {
     try {
       setNoteSaving(true);
       const response = await axios.post(
-        `http://localhost:8000/student/document/${selectedDocumentId}/notes`,
+        `${API_URL}/student/document/${selectedDocumentId}/notes`,
         createNotePayload(noteDraft),
         { headers: authHeaders }
       );
@@ -327,7 +328,7 @@ function AIAssistant() {
     try {
       setNoteSaving(true);
       const response = await axios.patch(
-        `http://localhost:8000/student/notes/${note._id}`,
+        `${API_URL}/student/notes/${note._id}`,
         {
           title: note.title,
           content: note.content,
@@ -353,7 +354,7 @@ function AIAssistant() {
     if (!window.confirm('Delete this sticky note?')) return;
 
     try {
-      await axios.delete(`http://localhost:8000/student/notes/${noteId}`, {
+      await axios.delete(`${API_URL}/student/notes/${noteId}`, {
         headers: authHeaders,
       });
       setNotes((prev) => prev.filter((note) => note._id !== noteId));

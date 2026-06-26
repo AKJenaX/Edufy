@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../../config';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
@@ -38,7 +39,7 @@ function FacultyDashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/faculty/dashboard', {
+      const response = await axios.get(`${API_URL}/faculty/dashboard`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDashboardData(response.data);
@@ -58,7 +59,7 @@ function FacultyDashboard() {
 
     try {
       await axios.post(
-        'http://localhost:8000/faculty/attendance/mark',
+        `${API_URL}/faculty/attendance/mark`,
         attendanceForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -90,7 +91,7 @@ function FacultyDashboard() {
       const constraints = timetableForm.constraints.split(',').map(c => c.trim()).filter(c => c);
 
       const response = await axios.post(
-        'http://localhost:8000/faculty/timetable/generate',
+        `${API_URL}/faculty/timetable/generate`,
         { subjects, constraints },
         { headers: { Authorization: `Bearer ${token}` } }
       );
